@@ -1,7 +1,6 @@
 package com.kavex.xtoke.controle_estoque.domain.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,19 +10,34 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
-@Table
+@Table(name = "clientes")
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 public class Cliente {
 
+    @Id
+    @GeneratedValue
+    @org.hibernate.annotations.UuidGenerator
     private UUID id;
-    private String nome;
-    private String cpf;
-    private String email;
-    private String fone;
-    private String endereco;
-    private LocalDateTime dataCadastro;
 
+    @Column(nullable = false)
+    private String nome;
+
+    @Column(nullable = false, unique = true, length = 11)
+    private String cpf;
+
+    @Column(nullable = false, unique = true)
+    private String email;
+
+    @Column(nullable = false)
+    private String fone;
+
+    @Column(nullable = false)
+    private String endereco;
+
+    @Column(nullable = false, updatable = false)
+    private LocalDateTime dataCadastro = LocalDateTime.now();
 }
+

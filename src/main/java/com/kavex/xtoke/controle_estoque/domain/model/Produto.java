@@ -1,7 +1,8 @@
 package com.kavex.xtoke.controle_estoque.domain.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
+import com.kavex.xtoke.controle_estoque.domain.exception.ErroMensagem;
+import com.kavex.xtoke.controle_estoque.domain.exception.ProdutoException;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,21 +13,62 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
-@Table
+@Table(name = "produtos")
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 public class Produto {
 
+    @Id
+    @GeneratedValue
+    @org.hibernate.annotations.UuidGenerator
     private UUID id;
-    private String nome;
-    private String descricao;
-    private BigDecimal preco;
-    private Integer estoque;
-    private String unidadeMedida;
-    private Fornecedor fornecedor;
-    private LocalDateTime dataCadastro;
-    private LocalDateTime ultimaAtualizacao;
 
+    @Column(nullable = false)
+    private String nome;
+
+    @Column(nullable = false)
+    private String descricao;
+
+    @Column(nullable = false)
+    private BigDecimal preco;
+
+    @Column(nullable = false)
+    private Integer estoque;
+
+    @Column(nullable = false)
+    private Integer estoqueMinimo;
+
+    @Column(nullable = false)
+    private String unidadeMedida;
+
+    @ManyToOne
+    @JoinColumn(name = "fornecedor_id", nullable = false)
+    private Fornecedor fornecedor;
+
+    @Column(nullable = false, updatable = false)
+    private LocalDateTime dataCadastro = LocalDateTime.now();
+
+    @Column(nullable = false)
+    private LocalDateTime ultimaAtualizacao = LocalDateTime.now();
+
+    @PreUpdate
+    protected void onUpdate() {
+        this.ultimaAtualizacao = LocalDateTime.now();
+    }
+
+    public void atualizarEstoque(Integer quantidadeAlteracao) {
+        Integer novoEstoque = this.estoque + quantidadeAlteracao;
+
+        if (novoEstoque < 0)
+            throw new ProdutoException(ErroMensagem.ESTOQUE_INSUFICIENTE.getMensagem());
+
+        this.estoque = novoEstoque;
+    }
+
+    public Boolean estoqueEstaBaixo() {
+        return this.estoque <= this.estoqueMinimo;
+    }
 }
+

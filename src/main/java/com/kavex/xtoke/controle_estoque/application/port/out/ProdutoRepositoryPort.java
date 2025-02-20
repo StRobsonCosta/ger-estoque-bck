@@ -12,4 +12,6 @@ public interface ProdutoRepositoryPort {
     Optional<Produto> findById(UUID id);
     List<Produto> findAll();
     void deleteById(UUID id);
+    boolean existsById(UUID id);
+    boolean existsByNome(String nome);
 }
