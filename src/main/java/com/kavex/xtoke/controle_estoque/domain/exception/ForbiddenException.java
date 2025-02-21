@@ -3,9 +3,10 @@ package com.kavex.xtoke.controle_estoque.domain.exception;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-@ResponseStatus(HttpStatus.NOT_FOUND)
-public class XtokeForbiddenException extends RuntimeException {
-    public XtokeForbiddenException(String produtoId) {
-        super(String.format("Produto com ID %s não encontrado.", produtoId));
+@ResponseStatus(HttpStatus.FORBIDDEN)
+public class ForbiddenException extends BaseException {
+
+    public ForbiddenException(ErroMensagem erroMensagem) {
+        super(erroMensagem);
     }
 }

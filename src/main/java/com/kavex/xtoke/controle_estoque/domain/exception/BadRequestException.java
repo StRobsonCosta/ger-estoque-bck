@@ -6,17 +6,9 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 @Getter
 @ResponseStatus(HttpStatus.BAD_REQUEST)
-public class XtokeBadRequestException extends BaseException {
+public class BadRequestException extends BaseException {
 
-    private final String produtoId;
-    private final Integer quantDisponivel;
-    private final Integer quantRequerida;
-
-    public XtokeBadRequestException(ErroMensagem erroMensagem) {
-        super(String.format("Estoque insuficiente para o produto ID %s. Disponível: %d, Requerido: %d",
-                produtoId, quantDisponivel, quantRequerida));
-        this.produtoId = produtoId;
-        this.quantDisponivel = quantDisponivel;
-        this.quantRequerida = quantRequerida;
+    public BadRequestException(ErroMensagem erroMensagem) {
+        super(erroMensagem);
     }
 }

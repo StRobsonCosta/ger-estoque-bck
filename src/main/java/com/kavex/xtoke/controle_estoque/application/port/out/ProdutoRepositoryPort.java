@@ -14,4 +14,6 @@ public interface ProdutoRepositoryPort {
     void deleteById(UUID id);
     boolean existsById(UUID id);
     boolean existsByNome(String nome);
+
+    boolean existsByFornecedorId(UUID fornecedorId);
 }

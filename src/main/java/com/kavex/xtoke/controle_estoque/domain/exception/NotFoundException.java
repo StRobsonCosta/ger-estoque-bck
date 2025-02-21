@@ -3,10 +3,11 @@ package com.kavex.xtoke.controle_estoque.domain.exception;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-@ResponseStatus(HttpStatus.FORBIDDEN)
-public class XtokeNotFoundException extends RuntimeException {
-    public XtokeNotFoundException(String message) {
-        super(message);
+@ResponseStatus(HttpStatus.NOT_FOUND)
+public class NotFoundException extends BaseException {
+
+    public NotFoundException(ErroMensagem erroMensagem) {
+        super(erroMensagem);
     }
 
 }

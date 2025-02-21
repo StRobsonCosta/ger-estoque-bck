@@ -1,7 +1,7 @@
 package com.kavex.xtoke.controle_estoque.domain.model;
 
 import com.kavex.xtoke.controle_estoque.domain.exception.ErroMensagem;
-import com.kavex.xtoke.controle_estoque.domain.exception.ProdutoException;
+import com.kavex.xtoke.controle_estoque.domain.exception.ForbiddenException;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -62,7 +62,7 @@ public class Produto {
         Integer novoEstoque = this.estoque + quantidadeAlteracao;
 
         if (novoEstoque < 0)
-            throw new ProdutoException(ErroMensagem.ESTOQUE_INSUFICIENTE.getMensagem());
+            throw new ForbiddenException(ErroMensagem.ESTOQUE_INSUFICIENTE.getMensagem());
 
         this.estoque = novoEstoque;
     }
