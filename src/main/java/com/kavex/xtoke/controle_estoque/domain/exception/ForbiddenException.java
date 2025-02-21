@@ -4,8 +4,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 @ResponseStatus(HttpStatus.NOT_FOUND)
-public class ProdutoException extends RuntimeException {
-    public ProdutoException(String produtoId) {
+public class XtokeForbiddenException extends RuntimeException {
+    public XtokeForbiddenException(String produtoId) {
         super(String.format("Produto com ID %s não encontrado.", produtoId));
     }
 }
