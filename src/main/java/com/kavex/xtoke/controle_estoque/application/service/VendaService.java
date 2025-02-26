@@ -8,6 +8,7 @@ import com.kavex.xtoke.controle_estoque.domain.exception.ErroMensagem;
 import com.kavex.xtoke.controle_estoque.domain.exception.NotFoundException;
 import com.kavex.xtoke.controle_estoque.domain.model.StatusVenda;
 import com.kavex.xtoke.controle_estoque.domain.model.Venda;
+import com.kavex.xtoke.controle_estoque.infrastructure.queue.RedisEventQueueService;
 import com.kavex.xtoke.controle_estoque.web.dto.VendaDTO;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +21,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class VendaService implements VendaUseCase {
 
+    private final RedisEventQueueService redisEventQueueService;
     private final VendaRepositoryPort vendaRepository;
     private final ProdutoService produtoService;
     private final VendaMapper vendaMapper;
@@ -33,6 +35,9 @@ public class VendaService implements VendaUseCase {
         });
         venda.setStatus(StatusVenda.PENDENTE);
         venda = vendaRepository.save(venda);
+
+        redisEventQueueService.adicionarEventoNaFila("Venda realizada: " + venda.getId());
+
         return vendaMapper.toDTO(venda);
     }
 

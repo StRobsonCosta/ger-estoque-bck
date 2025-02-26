@@ -6,13 +6,16 @@ import com.kavex.xtoke.controle_estoque.application.port.out.FornecedorRepositor
 import com.kavex.xtoke.controle_estoque.application.port.out.ProdutoRepositoryPort;
 import com.kavex.xtoke.controle_estoque.domain.exception.BadRequestException;
 import com.kavex.xtoke.controle_estoque.domain.exception.ErroMensagem;
+import com.kavex.xtoke.controle_estoque.domain.exception.NotFoundException;
 import com.kavex.xtoke.controle_estoque.domain.model.Fornecedor;
 import com.kavex.xtoke.controle_estoque.web.dto.FornecedorDTO;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -30,6 +33,31 @@ public class FornecedorService implements FornecedorUseCase {
         }
         Fornecedor fornecedor = fornecedorMapper.toEntity(fornecedorDTO);
         return fornecedorMapper.toDTO(fornecedorRepository.save(fornecedor));
+    }
+
+    @Override
+    public FornecedorDTO buscarPorId(UUID fornecedorId) {
+        Fornecedor fornecedor = fornecedorRepository.findById(fornecedorId)
+                .orElseThrow(() -> new NotFoundException(ErroMensagem.FORNECEDOR_NAO_ENCONTRADO));
+        return fornecedorMapper.toDTO(fornecedor);
+    }
+
+    @Override
+    public List<FornecedorDTO> listarTodos() {
+        return fornecedorRepository.findAll().stream()
+                .map(fornecedorMapper::toDTO)
+                .collect(Collectors.toList());
+    }
+
+    @Transactional
+    @Override
+    public FornecedorDTO atualizar(UUID fornecedorId, FornecedorDTO fornecedorDTO) {
+        Fornecedor fornecedor = fornecedorRepository.findById(fornecedorId)
+                .orElseThrow(() -> new NotFoundException(ErroMensagem.FORNECEDOR_NAO_ENCONTRADO));
+
+        fornecedorMapper.updateFromDTO(fornecedorDTO, fornecedor);
+        fornecedorRepository.save(fornecedor);
+        return fornecedorMapper.toDTO(fornecedor);
     }
 
     @Transactional

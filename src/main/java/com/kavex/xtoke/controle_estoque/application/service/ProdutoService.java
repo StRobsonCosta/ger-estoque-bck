@@ -10,6 +10,9 @@ import com.kavex.xtoke.controle_estoque.domain.exception.NotFoundException;
 import com.kavex.xtoke.controle_estoque.domain.model.Produto;
 import com.kavex.xtoke.controle_estoque.infrastructure.adapter.messaging.EventEstoqueBaixo;
 import com.kavex.xtoke.controle_estoque.web.dto.ProdutoDTO;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
@@ -31,8 +34,9 @@ public class ProdutoService implements ProdutoUseCase {
 
     @Transactional
     @Override
-    public void atualizarEstoque(UUID produtoId, Integer quantidadeAlteracao) {
-        Produto produto = produtoRepository.findById(produtoId)
+    @Cacheable(value = "produtos", key = "#id")
+    public void atualizarEstoque(UUID id, Integer quantidadeAlteracao) {
+        Produto produto = produtoRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException(ErroMensagem.PRODUTO_NAO_ENCONTRADO));
 
         Integer estoqueAtual = produto.getEstoque();
@@ -48,6 +52,7 @@ public class ProdutoService implements ProdutoUseCase {
     }
 
     @Override
+    @Cacheable(value = "produtos", key = "#id")
     public ProdutoDTO buscarPorId(UUID id) {
         Produto produto = produtoRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException(ErroMensagem.PRODUTO_NAO_ENCONTRADO));
@@ -56,6 +61,7 @@ public class ProdutoService implements ProdutoUseCase {
 
     @Transactional
     @Override
+    @CachePut(value = "produtos", key = "#produtoDTO.id")
     public ProdutoDTO salvar(ProdutoDTO produtoDTO) {
         // Verifica se já existe um produto com o mesmo nome/código
         if (produtoRepository.existsByNome(produtoDTO.getNome()))
@@ -76,6 +82,7 @@ public class ProdutoService implements ProdutoUseCase {
 
     @Transactional
     @Override
+    @CacheEvict(value = "produtos", key = "#id")
     public void removerProduto(UUID id) {
         if (!produtoRepository.existsById(id))
             throw new NotFoundException(ErroMensagem.PRODUTO_NAO_ENCONTRADO);
