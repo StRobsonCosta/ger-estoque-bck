@@ -19,6 +19,8 @@ public enum ErroMensagem {
     // 🔹 Erros 404 - NOT_FOUND
     PRODUTO_NAO_ENCONTRADO(HttpStatus.NOT_FOUND, "Produto não encontrado para o ID fornecido."),
     VENDA_NAO_ENCONTRADA(HttpStatus.NOT_FOUND, "Venda não encontrada para o ID fornecido."),
+    FORNECEDOR_NAO_ENCONTRADO(HttpStatus.NOT_FOUND, "Fornecedor não encontrado para o ID fornecido."),
+    USUARIO_NAO_ENCONTRADO(HttpStatus.NOT_FOUND, "Usuário não encontrado."),
 
     // 🔹 Erros 403 - FORBIDDEN
     SEM_PERMISSAO_CANCELAR_VENDA(HttpStatus.FORBIDDEN, "Usuário não tem permissão para cancelar esta venda."),

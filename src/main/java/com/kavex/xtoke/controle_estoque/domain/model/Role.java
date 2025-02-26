@@ -2,22 +2,19 @@ package com.kavex.xtoke.controle_estoque.domain.model;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.GrantedAuthority;
 
 @Getter
 @RequiredArgsConstructor
-public enum StatusVenda {
-    PENDENTE("Venda pendente"),
-    CONCLUIDA("Venda concluída"),
-    CANCELADA("Venda cancelada");
+public enum Role implements GrantedAuthority {
+    ADMIN,
+    CLIENTE,
+    FORNECEDOR,
+    USER;
 
-    private final String descricao;
-
-    public static StatusVenda fromString(String value) {
-        for (StatusVenda status : StatusVenda.values()) {
-            if (status.name().equalsIgnoreCase(value))
-                return status;
-        }
-        throw new IllegalArgumentException("Status de venda inválido: " + value);
+    @Override
+    public String getAuthority() {
+        return name();
     }
 
 }

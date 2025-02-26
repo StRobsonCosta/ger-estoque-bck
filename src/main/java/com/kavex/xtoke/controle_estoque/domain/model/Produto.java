@@ -62,7 +62,7 @@ public class Produto {
         Integer novoEstoque = this.estoque + quantidadeAlteracao;
 
         if (novoEstoque < 0)
-            throw new ForbiddenException(ErroMensagem.ESTOQUE_INSUFICIENTE.getMensagem());
+            throw new ForbiddenException(ErroMensagem.ESTOQUE_INSUFICIENTE);
 
         this.estoque = novoEstoque;
     }
