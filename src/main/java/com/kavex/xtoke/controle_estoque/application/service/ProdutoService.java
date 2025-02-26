@@ -16,6 +16,7 @@ import org.springframework.cache.annotation.Cacheable;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.support.TransactionTemplate;
 
@@ -34,7 +35,7 @@ public class ProdutoService implements ProdutoUseCase {
 
     @Transactional
     @Override
-    @Cacheable(value = "produtos", key = "#id")
+    @CachePut(value = "produtos", key = "#id")
     public void atualizarEstoque(UUID id, Integer quantidadeAlteracao) {
         Produto produto = produtoRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException(ErroMensagem.PRODUTO_NAO_ENCONTRADO));
@@ -44,32 +45,34 @@ public class ProdutoService implements ProdutoUseCase {
 
         produtoRepository.save(produto);
 
-        // Disparar evento APÓS a transação ser confirmada
-        transactionTemplate.executeWithoutResult(status -> {
-            if (produto.estoqueEstaBaixo())
-                eventPublisher.publishEvent(new EventEstoqueBaixo(produto.getId(), estoqueAtual));
-        });
+        // 🔥 Se o estoque estiver baixo, publica o evento
+        dispararEventoEstoqueBaixo(produto, estoqueAtual);
+    }
+
+    private void dispararEventoEstoqueBaixo(Produto produto, Integer estoqueAtual) {
+        if (produto.estoqueEstaBaixo())
+            eventPublisher.publishEvent(new EventEstoqueBaixo(produto.getId(), estoqueAtual));
     }
 
     @Override
-    @Cacheable(value = "produtos", key = "#id")
+    @Cacheable(value = "produtos", key = "#id", unless = "#result == null")
     public ProdutoDTO buscarPorId(UUID id) {
-        Produto produto = produtoRepository.findById(id)
+        return produtoRepository.findById(id)
+                .map(produtoMapper::toDTO)
                 .orElseThrow(() -> new NotFoundException(ErroMensagem.PRODUTO_NAO_ENCONTRADO));
-        return produtoMapper.toDTO(produto);
     }
 
     @Transactional
     @Override
     @CachePut(value = "produtos", key = "#produtoDTO.id")
     public ProdutoDTO salvar(ProdutoDTO produtoDTO) {
-        // Verifica se já existe um produto com o mesmo nome/código
-        if (produtoRepository.existsByNome(produtoDTO.getNome()))
+        try {
+            Produto produto = produtoMapper.toEntity(produtoDTO);
+            Produto salvo = produtoRepository.save(produto);
+            return produtoMapper.toDTO(salvo);
+        } catch (DataIntegrityViolationException e) {
             throw new BadRequestException(ErroMensagem.PRODUTO_DUPLICADO);
-
-        Produto produto = produtoMapper.toEntity(produtoDTO);
-        Produto salvo = produtoRepository.save(produto);
-        return produtoMapper.toDTO(salvo);
+        }
     }
 
     @Override

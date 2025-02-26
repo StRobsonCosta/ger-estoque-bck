@@ -14,4 +14,5 @@ public interface FornecedorRepositoryPort {
     void deleteById(UUID id);
 
     boolean existsByCnpj(String cnpj);
+    Optional<Fornecedor> findFornecedorByProduto(UUID produtoId);
 }

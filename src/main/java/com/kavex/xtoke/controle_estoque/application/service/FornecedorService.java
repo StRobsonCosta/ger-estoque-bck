@@ -11,6 +11,8 @@ import com.kavex.xtoke.controle_estoque.domain.model.Fornecedor;
 import com.kavex.xtoke.controle_estoque.web.dto.FornecedorDTO;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -27,15 +29,17 @@ public class FornecedorService implements FornecedorUseCase {
 
     @Transactional
     @Override
+    @CacheEvict(value = "fornecedores", allEntries = true)
     public FornecedorDTO salvar(FornecedorDTO fornecedorDTO) {
-        if (fornecedorRepository.existsByCnpj(fornecedorDTO.getCnpj())) {
+        if (fornecedorRepository.existsByCnpj(fornecedorDTO.getCnpj()))
             throw new BadRequestException(ErroMensagem.CPF_CNPJ_DUPLICADO);
-        }
+
         Fornecedor fornecedor = fornecedorMapper.toEntity(fornecedorDTO);
         return fornecedorMapper.toDTO(fornecedorRepository.save(fornecedor));
     }
 
     @Override
+    @Cacheable(value = "fornecedores", key = "#fornecedorId")
     public FornecedorDTO buscarPorId(UUID fornecedorId) {
         Fornecedor fornecedor = fornecedorRepository.findById(fornecedorId)
                 .orElseThrow(() -> new NotFoundException(ErroMensagem.FORNECEDOR_NAO_ENCONTRADO));
@@ -51,6 +55,7 @@ public class FornecedorService implements FornecedorUseCase {
 
     @Transactional
     @Override
+    @CacheEvict(value = "fornecedores", key = "#fornecedorId")
     public FornecedorDTO atualizar(UUID fornecedorId, FornecedorDTO fornecedorDTO) {
         Fornecedor fornecedor = fornecedorRepository.findById(fornecedorId)
                 .orElseThrow(() -> new NotFoundException(ErroMensagem.FORNECEDOR_NAO_ENCONTRADO));
@@ -62,10 +67,11 @@ public class FornecedorService implements FornecedorUseCase {
 
     @Transactional
     @Override
+    @CacheEvict(value = "fornecedores", key = "#fornecedorId", allEntries = true)
     public void excluir(UUID fornecedorId) {
-        if (produtoRepository.existsByFornecedorId(fornecedorId)) {
+        if (produtoRepository.existsByFornecedorId(fornecedorId))
             throw new BadRequestException(ErroMensagem.EXCLUSAO_FORNECEDOR_NEGADA);
-        }
+
         fornecedorRepository.deleteById(fornecedorId);
     }
 }

@@ -15,6 +15,7 @@ public class KafkaEventPublisherAdapter {
     private final KafkaTemplate<String, EventEstoqueBaixo> kafkaTemplateEstoque;
     private final KafkaTemplate<String, EventPedidoCriado> kafkaTemplatePedido;
     private final KafkaTemplate<String, EventVendaRealizada> kafkaTemplateVenda;
+    private final KafkaTemplate<String, EventNotaFiscalGerada> kafkaTemplateNotaFiscal;
     private final RedisEventQueueService redisEventQueueService;
     private final KafkaTemplate<String, String> kafkaTemplateRedis;
 
@@ -35,6 +36,12 @@ public class KafkaEventPublisherAdapter {
         EventVendaRealizada event = new EventVendaRealizada(vendaId, clienteId);
         kafkaTemplateVenda.send("VENDA-REALIZADA-TOPIC", event);
         System.out.println("📤 Evento de venda realizada enviado para Kafka: " + event);
+    }
+
+    public void publicarEventoNotaFiscalGerada(UUID vendaId) {
+        EventNotaFiscalGerada event = new EventNotaFiscalGerada(vendaId);
+        kafkaTemplateNotaFiscal.send("NOTA-FISCAL-GERADA-TOPIC", event);
+        System.out.println("📤 Evento de nota fiscal enviado para Kafka: " + event);
     }
 
     @Scheduled(fixedRate = 5000) // Executa a cada 5 segundos
