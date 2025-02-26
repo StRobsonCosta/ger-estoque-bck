@@ -1,4 +1,4 @@
-package com.kavex.xtoke.controle_estoque.infrastructure.config;
+package com.kavex.xtoke.controle_estoque.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
