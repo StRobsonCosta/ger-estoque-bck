@@ -51,7 +51,7 @@ public class ProdutoService implements ProdutoUseCase {
 
     private void dispararEventoEstoqueBaixo(Produto produto, Integer estoqueAtual) {
         if (produto.estoqueEstaBaixo())
-            eventPublisher.publishEvent(new EventEstoqueBaixo(produto.getId(), estoqueAtual));
+            eventPublisher.publishEvent(new EventEstoqueBaixo(produto.getNome(), produto.getId(), estoqueAtual));
     }
 
     @Override

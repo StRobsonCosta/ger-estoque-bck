@@ -20,6 +20,6 @@ public class ListenerPedidoEvent {
         kafkaEventPublisher.publicarEventoPedidoCriado(event.pedidoId(), event.clienteId());
 
         //Cuidado
-        pedidoService.enviarPedidoParaFornecedor(event.clienteId(), event.pedidoId());
+       // pedidoService.enviarPedidoParaFornecedor(event.clienteId(), event.pedidoId());
     }
 }

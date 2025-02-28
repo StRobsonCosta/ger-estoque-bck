@@ -11,7 +11,6 @@ import com.kavex.xtoke.controle_estoque.domain.model.ItemVenda;
 import com.kavex.xtoke.controle_estoque.domain.model.Pedido;
 import com.kavex.xtoke.controle_estoque.domain.model.Produto;
 import com.kavex.xtoke.controle_estoque.infrastructure.adapter.messaging.EventPedidoCriado;
-import com.kavex.xtoke.controle_estoque.infrastructure.adapter.messaging.EventVendaRealizada;
 import com.kavex.xtoke.controle_estoque.infrastructure.adapter.messaging.KafkaEventPublisherAdapter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
@@ -56,16 +55,16 @@ public class PedidoService implements PedidoUseCase {
         pedidoRepository.save(pedido);
 
         // 🔥 Publica evento de pedido criado
-        kafkaEventPublisher.publicarEventoPedidoCriado(pedido.getId(), fornecedor.getId());
+//        kafkaEventPublisher.publicarEventoPedidoCriado(pedido.getId(), fornecedor.getId());
         eventPublisher.publishEvent(new EventPedidoCriado(pedido.getId(), fornecedor.getId()));
     }
 
-    public void enviarPedidoParaFornecedor(UUID fornecedorId, UUID pedidoId) {
-        String url = "https://api.fornecedor.com/pedidos";
-        PedidoFornecedorDTO pedidoFornecedor = new PedidoFornecedorDTO(fornecedorId, pedidoId);
-
-        restTemplate.postForObject(url, pedidoFornecedor, Void.class);
-
-        System.out.println("📤 Pedido enviado ao fornecedor via API.");
-    }
+//    public void enviarPedidoParaFornecedor(UUID fornecedorId, UUID pedidoId) {
+//        String url = "https://api.fornecedor.com/pedidos";
+//        PedidoFornecedorDTO pedidoFornecedor = new PedidoFornecedorDTO(fornecedorId, pedidoId);
+//
+//        restTemplate.postForObject(url, pedidoFornecedor, Void.class);
+//
+//        System.out.println("📤 Pedido enviado ao fornecedor via API.");
+//    }
 }

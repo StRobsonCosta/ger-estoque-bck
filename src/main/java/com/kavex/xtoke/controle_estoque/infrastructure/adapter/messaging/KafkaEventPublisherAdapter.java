@@ -19,8 +19,8 @@ public class KafkaEventPublisherAdapter {
     private final RedisEventQueueService redisEventQueueService;
     private final KafkaTemplate<String, String> kafkaTemplateRedis;
 
-    public void publicarEventoEstoqueBaixo(UUID produtoId, Integer quantidadeAtual) {
-        EventEstoqueBaixo event = new EventEstoqueBaixo(produtoId, quantidadeAtual);
+    public void publicarEventoEstoqueBaixo(String nomeProduto, UUID produtoId, Integer quantidadeAtual) {
+        EventEstoqueBaixo event = new EventEstoqueBaixo(nomeProduto, produtoId, quantidadeAtual);
 
         kafkaTemplateEstoque.send("ESTOQUE-BAIXO-TOPIC", event);
         System.out.println("📤 Evento enviado para Kafka: " + event);
