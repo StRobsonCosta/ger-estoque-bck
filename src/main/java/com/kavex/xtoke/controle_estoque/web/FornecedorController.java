@@ -19,7 +19,7 @@ public class FornecedorController {
     private final FornecedorUseCase fornecedorUseCase;
 
     @GetMapping
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_USER')")
+//    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_USER')")
     public ResponseEntity<?> buscarPorId(@RequestParam UUID fornecedorId) {
         return ResponseEntity.ok(fornecedorUseCase.buscarPorId(fornecedorId));
     }
@@ -31,21 +31,21 @@ public class FornecedorController {
     }
 
     @PostMapping
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+//    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<?> salvar(@RequestBody @Valid FornecedorDTO fornecedorDTO) {
         FornecedorDTO fornecedorCriado = fornecedorUseCase.salvar(fornecedorDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(fornecedorCriado);
     }
 
     @PutMapping
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+//    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<?> atualizar(@RequestBody @Valid FornecedorDTO fornecedorDTO, @RequestParam UUID fornecedorId) {
         FornecedorDTO fornecedorAtualizado = fornecedorUseCase.atualizar(fornecedorId, fornecedorDTO);
         return ResponseEntity.ok(fornecedorAtualizado);
     }
 
     @DeleteMapping
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+//    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<?> excluir(@RequestParam UUID fornecedorId) {
         fornecedorUseCase.excluir(fornecedorId);
         return ResponseEntity.noContent().build();

@@ -35,7 +35,7 @@ public class PedidoService implements PedidoUseCase {
         Produto produto = produtoRepository.findById(produtoId)
                 .orElseThrow(() -> new NotFoundException(ErroMensagem.PRODUTO_NAO_ENCONTRADO));
 
-        Fornecedor fornecedor = fornecedorRepository.findFornecedorByProduto(produtoId)
+        Fornecedor fornecedor = fornecedorRepository.findByProdutoId(produtoId)
                 .orElseThrow(() -> new NotFoundException(ErroMensagem.FORNECEDOR_NAO_ENCONTRADO));
 
         ItemVenda itemVenda = new ItemVenda(
@@ -55,7 +55,6 @@ public class PedidoService implements PedidoUseCase {
         pedidoRepository.save(pedido);
 
         // 🔥 Publica evento de pedido criado
-//        kafkaEventPublisher.publicarEventoPedidoCriado(pedido.getId(), fornecedor.getId());
         eventPublisher.publishEvent(new EventPedidoCriado(pedido.getId(), fornecedor.getId()));
     }
 

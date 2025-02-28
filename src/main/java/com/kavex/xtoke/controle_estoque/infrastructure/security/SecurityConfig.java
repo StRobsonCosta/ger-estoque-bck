@@ -1,7 +1,11 @@
 package com.kavex.xtoke.controle_estoque.infrastructure.security;
 
+import com.kavex.xtoke.controle_estoque.application.service.UsuarioDetailsServiceImpl;
+import com.kavex.xtoke.controle_estoque.application.service.UsuarioService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 
@@ -27,9 +31,11 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final UsuarioDetailsServiceImpl usuarioService;
+
     private final UserDetailsService userDetailsService;
-    private final CustomAuthenticationProvider authenticationProvider;
+    private final RedisTokenService redisTokenService;
+    private final JwtService jwtService;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -37,14 +43,20 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/**").permitAll()
-                        .anyRequest().authenticated()
+//                        .requestMatchers("/auth/login", "/usuarios/cadastrar").permitAll()
+//                        .requestMatchers("/fornecedor/**").hasRole("ADMIN")
+//                        .requestMatchers("/produtos/**").hasAnyRole("ADMIN", "USER")
+//                        .requestMatchers("/api/vendas/**").hasAnyRole("ADMIN", "USER")
+//                        .anyRequest().authenticated()
+                                .anyRequest().permitAll()
                 )
 //                .oauth2Login(oauth2 -> oauth2 // Configuração OAuth2
 //                        .loginPage("/oauth2/authorization/login")
 //                )
-                .oauth2Login(Customizer.withDefaults()) // Configura OAuth2 Login com padrões seguros
-                .authenticationProvider(authenticationProvider) // Usa um provedor de autenticação personalizado
-                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+                //.oauth2Login(Customizer.withDefaults()) // Configura OAuth2 Login com padrões seguros
+                .httpBasic(Customizer.withDefaults())
+                .authenticationProvider(customAuthenticationProvider()) // Usa um provedor de autenticação personalizado
+                .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
@@ -52,9 +64,24 @@ public class SecurityConfig {
     @Bean
     public AuthenticationManager authenticationManager() {
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
-        authProvider.setUserDetailsService(userDetailsService);
+        authProvider.setUserDetailsService(userDetailsService());
         authProvider.setPasswordEncoder(passwordEncoder());
         return new ProviderManager(authProvider);
+    }
+
+    @Bean
+    public AuthenticationProvider customAuthenticationProvider() {
+        return new CustomAuthenticationProvider(userDetailsService(), passwordEncoder());
+    }
+
+    @Bean
+    public JwtAuthenticationFilter jwtAuthenticationFilter() {
+        return new JwtAuthenticationFilter(redisTokenService, jwtService, userDetailsService());
+    }
+
+    @Bean
+    public UserDetailsService userDetailsService() {
+        return usuarioService; // Retorna o próprio UsuarioService como um bean de UserDetailsService
     }
 
     @Bean

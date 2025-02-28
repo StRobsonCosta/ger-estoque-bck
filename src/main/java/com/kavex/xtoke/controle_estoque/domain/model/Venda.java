@@ -21,8 +21,7 @@ import java.util.UUID;
 public class Venda {
 
     @Id
-    @GeneratedValue
-    @org.hibernate.annotations.UuidGenerator
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)

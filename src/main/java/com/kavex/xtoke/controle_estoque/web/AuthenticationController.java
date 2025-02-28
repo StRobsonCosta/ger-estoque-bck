@@ -32,8 +32,6 @@ public class AuthenticationController {
         String token = jwtService.gerarToken(userDetails.getUsername());
 
         // Armazena o token no Redis
-//        redisTokenService.salvarToken(userDetails.getUserId(), token, expiration);
-
         redisTokenService.salvarToken(userDetails.getUsername(), token);
 
         return ResponseEntity.ok(token);
