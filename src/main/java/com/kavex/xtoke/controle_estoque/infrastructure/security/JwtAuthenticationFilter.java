@@ -35,7 +35,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             // Verifica se o token está registrado no Redis
             String tokenRedis = redisTokenService.obterToken(userId);
             if (tokenRedis == null || !token.equals(tokenRedis)) {
-                chain.doFilter(request, response);
+                // Token não encontrado no Redis, retorna uma resposta de erro ou interrompe o fluxo
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                 return;
             }
 
@@ -54,5 +55,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         chain.doFilter(request, response);
     }
+
 
 }

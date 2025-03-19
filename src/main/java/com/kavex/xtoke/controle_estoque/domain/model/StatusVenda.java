@@ -1,5 +1,6 @@
 package com.kavex.xtoke.controle_estoque.domain.model;
 
+import com.kavex.xtoke.controle_estoque.domain.exception.ErroMensagem;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -17,7 +18,7 @@ public enum StatusVenda {
             if (status.name().equalsIgnoreCase(value))
                 return status;
         }
-        throw new IllegalArgumentException("Status de venda inválido: " + value);
+        throw new IllegalArgumentException(ErroMensagem.STATUS_VENDA_INVALIDO.getMensagem() + value);
     }
 
 }

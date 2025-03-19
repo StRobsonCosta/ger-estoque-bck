@@ -11,6 +11,7 @@ import com.kavex.xtoke.controle_estoque.domain.model.Fornecedor;
 import com.kavex.xtoke.controle_estoque.web.dto.FornecedorDTO;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -19,6 +20,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class FornecedorService implements FornecedorUseCase {
@@ -67,7 +69,7 @@ public class FornecedorService implements FornecedorUseCase {
 
     @Transactional
     @Override
-    @CacheEvict(value = "fornecedores", key = "#fornecedorId", allEntries = true)
+    @CacheEvict(value = "fornecedores", allEntries = true)
     public void excluir(UUID fornecedorId) {
         if (produtoRepository.existsByFornecedorId(fornecedorId))
             throw new BadRequestException(ErroMensagem.EXCLUSAO_FORNECEDOR_NEGADA);

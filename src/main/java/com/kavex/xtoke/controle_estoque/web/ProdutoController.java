@@ -38,11 +38,18 @@ public class ProdutoController {
         return ResponseEntity.status(HttpStatus.CREATED).body(produtoCriado);
     }
 
-    @PutMapping("/estoque")
+    @PatchMapping("/estoque")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> atualizarEstoque(@RequestParam UUID produtoId, @RequestParam Integer quantidadeAlteracao) {
         produtoUseCase.atualizarEstoque(produtoId, quantidadeAlteracao);
         return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<?> atualizar(@RequestParam UUID produtoId, @RequestBody @Valid ProdutoDTO produtoDTO) {
+        ProdutoDTO produtoAtualizado = produtoUseCase.atualizar(produtoId, produtoDTO);
+        return ResponseEntity.ok(produtoAtualizado);
     }
 
     @DeleteMapping
