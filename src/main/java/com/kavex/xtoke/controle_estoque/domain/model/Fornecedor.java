@@ -41,7 +41,7 @@ public class Fornecedor {
 
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
-    private LocalDateTime dataCadastro;
+    private LocalDateTime dataCadastro = LocalDateTime.now();
 
     @OneToMany(mappedBy = "fornecedor", cascade = CascadeType.MERGE, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<Produto> produtos = new ArrayList<>();

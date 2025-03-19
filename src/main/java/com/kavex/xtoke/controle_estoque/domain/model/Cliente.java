@@ -24,16 +24,16 @@ public class Cliente {
     @Column(nullable = false)
     private String nome;
 
-    @Column(nullable = false, unique = true, length = 11)
+    @Column(unique = true, length = 11)
     private String cpf;
 
-    @Column(nullable = false, unique = true)
+    @Column(unique = true)
     private String email;
 
-    @Column(nullable = false)
+    @Column
     private String fone;
 
-    @Column(nullable = false)
+    @Column
     private String endereco;
 
     @Column(nullable = false, updatable = false)

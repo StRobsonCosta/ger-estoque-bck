@@ -18,6 +18,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -28,23 +29,10 @@ public class UsuarioService implements UsuarioUseCase {
     private final PasswordEncoder passwordEncoder;
     private final UsuarioMapper usuarioMapper;
 
-//    @Override
-//    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-//        Usuario usuario = usuarioRepository.findByEmail(username)
-//                .orElseThrow(() -> new UsernameNotFoundException(ErroMensagem.USUARIO_NAO_ENCONTRADO.getMensagem()));
-//
-////        UsuarioDTO usuarioDTO = usuarioMapper.toDTO(usuario);
-//        return new User(
-//                usuario.getEmail(),
-//                usuario.getSenha(),
-//                List.of(new SimpleGrantedAuthority(usuario.getRole().name())) // Exemplo: ROLE_ADMIN, ROLE_USER
-//        );
-//    }
-
     @Override
     public UsuarioDTO criarUsuario(UsuarioDTO usuarioDTO) {
         if (usuarioRepository.findByEmail(usuarioDTO.getEmail()).isPresent()) {
-            throw new IllegalArgumentException("E-mail já cadastrado!");
+            throw new IllegalArgumentException(ErroMensagem.EMAIL_JA_CADASTRADO.getMensagem());
         }
 
         Usuario usuario = new Usuario();
@@ -62,5 +50,21 @@ public class UsuarioService implements UsuarioUseCase {
         Usuario usuario = usuarioRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException(ErroMensagem.USUARIO_NAO_ENCONTRADO.getMensagem()));
         return usuarioMapper.toDTO(usuario);
+    }
+
+    public UsuarioDTO atualizarUsuario(UUID id, UsuarioDTO usuarioDTO) {
+        Usuario usuario = usuarioRepository.findById(id)
+                .orElseThrow(() -> new UsernameNotFoundException(ErroMensagem.USUARIO_NAO_ENCONTRADO.getMensagem()));
+
+        usuarioMapper.updateFromDTO(usuarioDTO, usuario);
+        usuarioRepository.save(usuario);
+        return usuarioMapper.toDTO(usuario);
+    }
+
+    public void desativarUsuario(String email) {
+        Usuario usuario = usuarioRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException(ErroMensagem.USUARIO_NAO_ENCONTRADO.getMensagem()));
+        usuario.setAtivo(Boolean.FALSE);
+        usuarioRepository.save(usuario);
     }
 }

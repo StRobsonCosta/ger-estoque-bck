@@ -32,7 +32,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
 
     private final UsuarioDetailsServiceImpl usuarioService;
-
+//    private final JwtAuthenticationEntryPoint authenticationEntryPoint;
     private final UserDetailsService userDetailsService;
     private final RedisTokenService redisTokenService;
     private final JwtService jwtService;
@@ -42,13 +42,12 @@ public class SecurityConfig {
         http.csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/**").permitAll()
-//                        .requestMatchers("/auth/login", "/usuarios/cadastrar").permitAll()
-//                        .requestMatchers("/fornecedor/**").hasRole("ADMIN")
+                                .requestMatchers("/auth/**", "/error").permitAll()
+                                .requestMatchers("/usuarios/cadastrar").permitAll()
+                                .requestMatchers("/fornecedores/**").hasRole("ADMIN")
 //                        .requestMatchers("/produtos/**").hasAnyRole("ADMIN", "USER")
-//                        .requestMatchers("/api/vendas/**").hasAnyRole("ADMIN", "USER")
-//                        .anyRequest().authenticated()
-                                .anyRequest().permitAll()
+//                        .requestMatchers("/vendas/**").hasAnyRole("ADMIN", "USER")
+                                .anyRequest().authenticated()
                 )
 //                .oauth2Login(oauth2 -> oauth2 // Configuração OAuth2
 //                        .loginPage("/oauth2/authorization/login")
@@ -56,6 +55,7 @@ public class SecurityConfig {
                 //.oauth2Login(Customizer.withDefaults()) // Configura OAuth2 Login com padrões seguros
                 .httpBasic(Customizer.withDefaults())
                 .authenticationProvider(customAuthenticationProvider()) // Usa um provedor de autenticação personalizado
+//                .exceptionHandling(ex -> ex.authenticationEntryPoint(authenticationEntryPoint))
                 .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
