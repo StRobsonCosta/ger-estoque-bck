@@ -23,7 +23,7 @@ public class ListenerEstoqueEvent {
         System.out.println("⚠ Estoque baixo para o produto: " + event.produtoId() +
                 " | Quantidade atual: " + event.quantidadeAtual());
 
-        kafkaEventPublisher.publicarEventoEstoqueBaixo(event.nomeProduto(), event.produtoId(), event.quantidadeAtual());
+        kafkaEventPublisher.publicarEventoEstoqueBaixo(event.nomeProduto(), event.produtoId(), event.quantidadeAtual(), event.quantReposicao());
 
         String mensagem = String.format("""
             <h2>Alerta de Estoque Baixo</h2>
@@ -35,6 +35,6 @@ public class ListenerEstoqueEvent {
         emailNotificationAdapter.enviarEmail("estoque@empresa.com", "⚠ Alerta: Estoque Baixo", mensagem);
 
         //Cuidado
-        pedidoService.criarPedidoReposicao(event.produtoId());
+        pedidoService.criarPedidoReposicao(event.produtoId(), event.quantReposicao());
     }
 }

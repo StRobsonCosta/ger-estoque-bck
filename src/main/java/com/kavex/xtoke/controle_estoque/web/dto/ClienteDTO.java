@@ -16,4 +16,8 @@ public class ClienteDTO {
     private String fone;
     private String endereco;
 
+    public void setCpf(String cpf) {
+        this.cpf = cpf.replaceAll("[^0-9]", ""); // Remove caracteres não numéricos
+    }
+
 }

@@ -13,5 +13,6 @@ public class ItemVendaDTO {
     private UUID produtoId;
     private Integer quantidade;
     private BigDecimal precoUnitario;
+    private BigDecimal subtotal;
 
 }

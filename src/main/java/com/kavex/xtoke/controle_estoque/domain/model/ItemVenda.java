@@ -19,8 +19,7 @@ import java.util.UUID;
 public class ItemVenda {
 
     @Id
-    @GeneratedValue
-    @org.hibernate.annotations.UuidGenerator
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
 
     @ManyToOne
@@ -31,16 +30,16 @@ public class ItemVenda {
     private Integer quantidade;
 
     @Column(nullable = false)
-    private BigDecimal precoUnit;
+    private BigDecimal precoUnitario;
 
     @Column(nullable = false)
     private BigDecimal subtotal;
 
     @PrePersist
     @PreUpdate
-    private void calcularSubtotal() {
-        if (Objects.nonNull(precoUnit) && Objects.nonNull(quantidade))
-            this.subtotal = precoUnit.multiply(BigDecimal.valueOf(quantidade));
+    public void calcularSubtotal() {
+        if (Objects.nonNull(precoUnitario) && Objects.nonNull(quantidade))
+            this.subtotal = precoUnitario.multiply(BigDecimal.valueOf(quantidade));
     }
 }
 

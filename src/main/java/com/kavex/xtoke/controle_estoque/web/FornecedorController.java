@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/fornecedor")
+@RequestMapping("/fornecedores")
 @RequiredArgsConstructor
 public class FornecedorController {
 
@@ -20,12 +20,12 @@ public class FornecedorController {
 
     @GetMapping
     @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_USER')")
-    public ResponseEntity<?> buscarPorId(@RequestParam UUID fornecedorId) {
-        return ResponseEntity.ok(fornecedorUseCase.buscarPorId(fornecedorId));
+    public ResponseEntity<?> buscarPorId(@RequestParam UUID id) {
+        return ResponseEntity.ok(fornecedorUseCase.buscarPorId(id));
     }
 
     @GetMapping("/listar")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> listarFornecedores() {
         return ResponseEntity.ok(fornecedorUseCase.listarTodos());
     }
@@ -39,15 +39,15 @@ public class FornecedorController {
 
     @PutMapping
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<?> atualizar(@RequestBody @Valid FornecedorDTO fornecedorDTO, @RequestParam UUID fornecedorId) {
-        FornecedorDTO fornecedorAtualizado = fornecedorUseCase.atualizar(fornecedorId, fornecedorDTO);
+    public ResponseEntity<?> atualizar(@RequestBody @Valid FornecedorDTO fornecedorDTO, @RequestParam UUID id) {
+        FornecedorDTO fornecedorAtualizado = fornecedorUseCase.atualizar(id, fornecedorDTO);
         return ResponseEntity.ok(fornecedorAtualizado);
     }
 
     @DeleteMapping
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<?> excluir(@RequestParam UUID fornecedorId) {
-        fornecedorUseCase.excluir(fornecedorId);
+    public ResponseEntity<?> excluir(@RequestParam UUID id) {
+        fornecedorUseCase.excluir(id);
         return ResponseEntity.noContent().build();
     }
 }

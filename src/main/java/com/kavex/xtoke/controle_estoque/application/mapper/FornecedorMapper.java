@@ -13,7 +13,7 @@ public interface FornecedorMapper {
     FornecedorDTO toDTO(Fornecedor fornecedor);
     Fornecedor toEntity(FornecedorDTO fornecedorDTO);
 
-    @Mapping(target = "id", ignore = true) // ID não deve ser alterado
-    @Mapping(target = "dataCadastro", ignore = true) // Data da venda geralmente não é alterada
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "dataCadastro", ignore = true)
     void updateFromDTO(FornecedorDTO fornecedorDTO, @MappingTarget Fornecedor fornecedor);
 }

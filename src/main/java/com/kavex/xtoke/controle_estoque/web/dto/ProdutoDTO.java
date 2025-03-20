@@ -15,6 +15,8 @@ public class ProdutoDTO {
     private String descricao;
     private Integer estoque;
     private BigDecimal preco;
+    private Integer estoqueMinimo;
+    private String unidadeMedida;
     private UUID fornecedorId;
 
 }

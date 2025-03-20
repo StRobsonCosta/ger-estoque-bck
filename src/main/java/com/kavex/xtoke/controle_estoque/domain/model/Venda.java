@@ -21,8 +21,7 @@ import java.util.UUID;
 public class Venda {
 
     @Id
-    @GeneratedValue
-    @org.hibernate.annotations.UuidGenerator
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
@@ -32,8 +31,9 @@ public class Venda {
     @Column(nullable = false)
     private BigDecimal total;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private String metodoPagamento;
+    private MetodoPagamento metodoPagamento;
 
     @Column(nullable = false, updatable = false)
     private LocalDateTime dataVenda = LocalDateTime.now();
@@ -48,10 +48,16 @@ public class Venda {
 
     @PrePersist
     @PreUpdate
-    private void calcularTotal() {
+    public void calcularTotal() {
         this.total = itens.stream()
                 .map(ItemVenda::getSubtotal)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
+    }
+
+    public void definirStatusComBaseNoPagamento() {
+        this.status = this.metodoPagamento.equals(MetodoPagamento.DINHEIRO)
+                ? StatusVenda.CONCLUIDA
+                : StatusVenda.PENDENTE;
     }
 }
 

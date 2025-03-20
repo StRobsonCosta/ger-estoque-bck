@@ -9,8 +9,12 @@ import org.mapstruct.MappingTarget;
 @Mapper(componentModel = "spring", uses = { ItemVendaMapper.class, ClienteMapper.class })
 public interface VendaMapper {
 
+    @Mapping(source = "cliente.id", target = "clienteId")
+    @Mapping(source = "itens", target = "itens")
     VendaDTO toDTO(Venda venda);
 
+    @Mapping(source = "clienteId", target = "cliente.id")
+    @Mapping(source = "itens", target = "itens")
     Venda toEntity(VendaDTO vendaDTO);
 
     @Mapping(target = "id", ignore = true) // ID não deve ser alterado
