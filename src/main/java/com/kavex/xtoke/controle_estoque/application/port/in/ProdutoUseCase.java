@@ -17,7 +17,7 @@ public interface ProdutoUseCase {
     void atualizarEstoque(UUID produtoId, Integer quantidadeAlteracao);
 
     @Cacheable(value = "produtos", key = "#id")
-    ProdutoDTO buscarPorId(UUID id);
+    ProdutoDTO buscarProdutoDtoPorId(UUID id);
 
     @CachePut(value = "produtos", key = "#produtoDTO.id")
     ProdutoDTO salvar(ProdutoDTO produtoDTO);

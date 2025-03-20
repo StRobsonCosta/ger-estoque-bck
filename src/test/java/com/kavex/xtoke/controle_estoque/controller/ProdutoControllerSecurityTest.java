@@ -59,7 +59,7 @@ public class ProdutoControllerSecurityTest {
         UUID produtoId = UUID.randomUUID();
         ProdutoDTO produtoDTO = getProdutoDTO();
 
-        when(produtoUseCase.buscarPorId(produtoId)).thenReturn(produtoDTO);
+        when(produtoUseCase.buscarProdutoDtoPorId(produtoId)).thenReturn(produtoDTO);
 
         mockMvc.perform(get("/produtos")
                         .param("id", produtoId.toString())

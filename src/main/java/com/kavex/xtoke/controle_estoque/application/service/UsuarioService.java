@@ -8,6 +8,7 @@ import com.kavex.xtoke.controle_estoque.domain.exception.ErroMensagem;
 import com.kavex.xtoke.controle_estoque.domain.model.Usuario;
 import com.kavex.xtoke.controle_estoque.web.dto.UsuarioDTO;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
@@ -20,6 +21,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.UUID;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @Qualifier("usuarioDetailsService")
@@ -31,7 +33,10 @@ public class UsuarioService implements UsuarioUseCase {
 
     @Override
     public UsuarioDTO criarUsuario(UsuarioDTO usuarioDTO) {
+        log.info("Iniciando criação de usuário com e-mail: {}", usuarioDTO.getEmail());
+
         if (usuarioRepository.findByEmail(usuarioDTO.getEmail()).isPresent()) {
+            log.warn("Tentativa de cadastro com e-mail já existente: {}", usuarioDTO.getEmail());
             throw new IllegalArgumentException(ErroMensagem.EMAIL_JA_CADASTRADO.getMensagem());
         }
 
@@ -41,30 +46,51 @@ public class UsuarioService implements UsuarioUseCase {
         usuario.setRole(usuarioDTO.getRole());
 
         usuario = usuarioRepository.save(usuario);
+        log.info("Usuário criado com sucesso. ID: {}", usuario.getId());
 
         return usuarioMapper.toDTO(usuario);
     }
 
     @Override
     public UsuarioDTO buscarPorEmail(String email) {
+        log.info("Buscando usuário com e-mail: {}", email);
         Usuario usuario = usuarioRepository.findByEmail(email)
-                .orElseThrow(() -> new UsernameNotFoundException(ErroMensagem.USUARIO_NAO_ENCONTRADO.getMensagem()));
+                .orElseThrow(() -> {
+                    log.warn("Usuário não encontrado para e-mail: {}", email);
+                    return new UsernameNotFoundException(ErroMensagem.USUARIO_NAO_ENCONTRADO.getMensagem());
+                });
+
+        log.info("Usuário encontrado. ID: {}", usuario.getId());
         return usuarioMapper.toDTO(usuario);
     }
 
     public UsuarioDTO atualizarUsuario(UUID id, UsuarioDTO usuarioDTO) {
+        log.info("Iniciando atualização do usuário com ID: {}", id);
+
         Usuario usuario = usuarioRepository.findById(id)
-                .orElseThrow(() -> new UsernameNotFoundException(ErroMensagem.USUARIO_NAO_ENCONTRADO.getMensagem()));
+                .orElseThrow(() -> {
+                    log.warn("Tentativa de atualização de usuário inexistente. ID: {}", id);
+                    return new UsernameNotFoundException(ErroMensagem.USUARIO_NAO_ENCONTRADO.getMensagem());
+                });
 
         usuarioMapper.updateFromDTO(usuarioDTO, usuario);
         usuarioRepository.save(usuario);
+
+        log.info("Usuário atualizado com sucesso. ID: {}", id);
         return usuarioMapper.toDTO(usuario);
     }
 
     public void desativarUsuario(String email) {
+        log.info("Iniciando desativação do usuário com e-mail: {}", email);
+
         Usuario usuario = usuarioRepository.findByEmail(email)
-                .orElseThrow(() -> new UsernameNotFoundException(ErroMensagem.USUARIO_NAO_ENCONTRADO.getMensagem()));
+                .orElseThrow(() -> {
+                    log.warn("Tentativa de desativação de usuário inexistente. E-mail: {}", email);
+                    return new UsernameNotFoundException(ErroMensagem.USUARIO_NAO_ENCONTRADO.getMensagem());
+                });
         usuario.setAtivo(Boolean.FALSE);
         usuarioRepository.save(usuario);
+
+        log.info("Usuário desativado com sucesso. E-mail: {}", email);
     }
 }

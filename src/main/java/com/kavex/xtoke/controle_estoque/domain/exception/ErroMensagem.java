@@ -18,7 +18,9 @@ public enum ErroMensagem {
     CPF_CNPJ_FORMATO_INVALIDO(HttpStatus.BAD_REQUEST, "Ops, Formato Inválido! CPF/CNPJ possui tamanho diferente de 11/14 caracteres ou caractere inválido."),
     EXCLUSAO_FORNECEDOR_NEGADA(HttpStatus.BAD_REQUEST, "Não é possível excluir um fornecedor com produtos associados."),
     EMAIL_JA_CADASTRADO(HttpStatus.BAD_REQUEST, "Eita! Este email já foi usado em um cadastro aqui."),
+    NOTA_FISCAL_DUPLICADA(HttpStatus.BAD_REQUEST,"Nota fiscal já gerada para esta venda." ),
 
+    // 🔹 Erros 406 - NOT_ACCEPTABLE
     METODO_PAGAMENTO_INCOMPATIVEL(HttpStatus.NOT_ACCEPTABLE, "Poxa! Essa forma de pagamento NÃO É ACEITÁVEL: "),
     STATUS_VENDA_INVALIDO(HttpStatus.NOT_ACCEPTABLE, "Status de venda inválido: "),
 

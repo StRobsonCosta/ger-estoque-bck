@@ -2,6 +2,7 @@ package com.kavex.xtoke.controle_estoque.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kavex.xtoke.controle_estoque.application.port.in.VendaUseCase;
+import com.kavex.xtoke.controle_estoque.domain.model.StatusVenda;
 import com.kavex.xtoke.controle_estoque.web.dto.ItemVendaDTO;
 import com.kavex.xtoke.controle_estoque.web.dto.VendaDTO;
 import org.junit.jupiter.api.Test;
@@ -47,7 +48,7 @@ public class VendaControllerSecurityTest {
     private static VendaDTO getVendaDTO() {
         return VendaDTO.builder()
                 .id(null) // ID será gerado no serviço
-                .clienteId(1L)
+                .clienteId(UUID.randomUUID())
                 .itens(List.of(
                         ItemVendaDTO.builder()
                                 .produtoId(UUID.randomUUID())
@@ -55,7 +56,7 @@ public class VendaControllerSecurityTest {
                                 .precoUnitario(BigDecimal.valueOf(100))
                                 .build()
                 ))
-                .status("PENDENTE")
+                .status(StatusVenda.PENDENTE)
                 .build();
     }
 
