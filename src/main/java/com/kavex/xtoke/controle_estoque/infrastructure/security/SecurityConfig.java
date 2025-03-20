@@ -3,6 +3,7 @@ package com.kavex.xtoke.controle_estoque.infrastructure.security;
 import com.kavex.xtoke.controle_estoque.application.service.UsuarioDetailsServiceImpl;
 import com.kavex.xtoke.controle_estoque.application.service.UsuarioService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -25,7 +26,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-
+@Slf4j
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
@@ -39,9 +40,12 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        log.info("Validando Filtros de Segurança do FilterChain|SecurityConfig para URL e Roles");
+
         http.csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
+                                .requestMatchers("/actuator/**").hasRole("ADMIN")
                                 .requestMatchers("/auth/**", "/error").permitAll()
                                 .requestMatchers("/usuarios/cadastrar").permitAll()
                                 .requestMatchers("/fornecedores/**").hasRole("ADMIN")
@@ -54,7 +58,7 @@ public class SecurityConfig {
 //                )
                 //.oauth2Login(Customizer.withDefaults()) // Configura OAuth2 Login com padrões seguros
                 .httpBasic(Customizer.withDefaults())
-                .authenticationProvider(customAuthenticationProvider()) // Usa um provedor de autenticação personalizado
+                .authenticationProvider(customAuthenticationProvider())
 //                .exceptionHandling(ex -> ex.authenticationEntryPoint(authenticationEntryPoint))
                 .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
 
