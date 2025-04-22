@@ -45,12 +45,12 @@ public class SecurityConfig {
         http.csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                                .requestMatchers("/actuator/**").hasRole("ADMIN")
+                                .requestMatchers("/actuator/**").hasAuthority("ADMIN")
                                 .requestMatchers("/auth/**", "/error").permitAll()
                                 .requestMatchers("/usuarios/cadastrar").permitAll()
-                                .requestMatchers("/fornecedores/**").hasRole("ADMIN")
-//                        .requestMatchers("/produtos/**").hasAnyRole("ADMIN", "USER")
-//                        .requestMatchers("/vendas/**").hasAnyRole("ADMIN", "USER")
+                                .requestMatchers("/fornecedores/**").hasAuthority("ADMIN")
+                        .requestMatchers("/produtos/**").hasAnyAuthority("ADMIN", "USER")
+                        .requestMatchers("/vendas/**").hasAnyAuthority("ADMIN", "USER")
                                 .anyRequest().authenticated()
                 )
 //                .oauth2Login(oauth2 -> oauth2 // Configuração OAuth2

@@ -22,7 +22,7 @@ public class ProdutoController {
     private final ProdutoUseCase produtoUseCase;
 
     @GetMapping
-    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+//    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     public ResponseEntity<ProdutoDTO> buscarPorId(@RequestParam UUID id) {
         return ResponseEntity.ok(produtoUseCase.buscarProdutoDtoPorId(id));
     }

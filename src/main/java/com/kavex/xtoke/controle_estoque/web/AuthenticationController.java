@@ -3,6 +3,7 @@ package com.kavex.xtoke.controle_estoque.web;
 import com.kavex.xtoke.controle_estoque.infrastructure.security.JwtService;
 import com.kavex.xtoke.controle_estoque.infrastructure.security.RedisTokenService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -14,6 +15,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
+@Slf4j
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor
@@ -29,6 +31,8 @@ public class AuthenticationController {
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(email, password));
 
         UserDetails userDetails = userDetailsService.loadUserByUsername(email);
+        log.info("Extraindo Authorities de UserDetails {}", userDetails.getAuthorities());
+
         String token = jwtService.gerarToken(userDetails.getUsername());
 
         // Armazena o token no Redis

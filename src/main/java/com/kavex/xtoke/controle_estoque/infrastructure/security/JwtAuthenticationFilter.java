@@ -38,6 +38,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
             log.info("Verificando se o token está registrado no Redis");
             String tokenRedis = redisTokenService.obterToken(userId);
+            log.info("Tokens: JWT -> {}, Redis -> {}", token, tokenRedis);
+
             if (Objects.isNull(tokenRedis) || !token.equals(tokenRedis)) {
                 log.warn("Token não registrado no Redis, o fluxo será interrompido");
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
@@ -57,6 +59,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 }
             }
         }
+        log.info("Contexto de segurança antes de continuar o fluxo: {}", SecurityContextHolder.getContext().getAuthentication());
 
         chain.doFilter(request, response);
     }
