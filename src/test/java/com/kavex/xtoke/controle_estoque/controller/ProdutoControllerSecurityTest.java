@@ -2,7 +2,9 @@ package com.kavex.xtoke.controle_estoque.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kavex.xtoke.controle_estoque.application.port.in.ProdutoUseCase;
+import com.kavex.xtoke.controle_estoque.domain.model.Produto;
 import com.kavex.xtoke.controle_estoque.web.ProdutoController;
+import com.kavex.xtoke.controle_estoque.web.dto.FornecedorDTO;
 import com.kavex.xtoke.controle_estoque.web.dto.ProdutoDTO;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -12,12 +14,15 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.mockito.Mockito.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 
 import java.math.BigDecimal;
@@ -53,6 +58,17 @@ public class ProdutoControllerSecurityTest {
                 .build();
     }
 
+    private static FornecedorDTO getFornecedorDTO() {
+        return FornecedorDTO.builder()
+                .id(UUID.randomUUID())
+                .nome("Fornecedor Teste")
+                .email("fornecedor@email.com")
+                .cnpj("12345678000123")
+                .fone("11 2222-2222")
+                .endereco("Rua das Empresa, 28")
+                .build();
+    }
+
     @Test
     @WithMockUser(username = "admin", roles = {"ADMIN"})
     void devePermitirAdminBuscarProdutoPorId() throws Exception {
@@ -63,7 +79,7 @@ public class ProdutoControllerSecurityTest {
 
         mockMvc.perform(get("/produtos")
                         .param("id", produtoId.toString())
-                        .with(csrf()))
+                        .with(jwt().authorities(new SimpleGrantedAuthority("ADMIN"))))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(produtoId.toString()))
                 .andExpect(jsonPath("$.nome").value(produtoDTO.getNome()));
@@ -92,7 +108,7 @@ public class ProdutoControllerSecurityTest {
         mockMvc.perform(post("/produtos")
                         .contentType("application/json")
                         .content(objectMapper.writeValueAsString(produtoDTO))
-                        .with(csrf()))
+                        .with(jwt().authorities(new SimpleGrantedAuthority("ADMIN"))))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id").value(produtoDTO.getId().toString()))
                 .andExpect(jsonPath("$.nome").value(produtoDTO.getNome()));
@@ -104,10 +120,10 @@ public class ProdutoControllerSecurityTest {
         UUID produtoId = UUID.randomUUID();
         Integer quantidadeAlteracao = 10;
 
-        mockMvc.perform(put("/produtos/estoque")
+        mockMvc.perform(patch("/produtos/estoque")
                         .param("produtoId", produtoId.toString())
                         .param("quantidadeAlteracao", quantidadeAlteracao.toString())
-                        .with(csrf()))
+                        .with(jwt().authorities(new SimpleGrantedAuthority("ADMIN"))))
                 .andExpect(status().isNoContent());
 
         verify(produtoUseCase, times(1)).atualizarEstoque(produtoId, quantidadeAlteracao);
@@ -120,7 +136,7 @@ public class ProdutoControllerSecurityTest {
 
         mockMvc.perform(delete("/produtos")
                         .param("id", produtoId.toString())
-                        .with(csrf()))
+                        .with(jwt().authorities(new SimpleGrantedAuthority("ADMIN"))))
                 .andExpect(status().isNoContent());
 
         verify(produtoUseCase, times(1)).removerProduto(produtoId);

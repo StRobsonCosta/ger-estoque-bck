@@ -27,15 +27,18 @@ public class FornecedorControllerSecurityTest {
     void devePermitirSalvarFornecedorParaAdmin() throws Exception {
         String fornecedorJson = """
             {
-                "nome": "Fornecedor Teste",
-                "cnpj": "12345678000199"
+                "nome": "Fornecedor Gêpêtê",
+                "cnpj": "12345678000198",
+                "email": "fornecedorgpt@empresa.com",
+                "fone": "(11) 99999-9999",
+                "endereco": "Rua das Empresas, 123 - São Paulo, SP"
             }
         """;
 
-        mockMvc.perform(post("/fornecedor")
+        mockMvc.perform(post("/fornecedores")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(fornecedorJson)
-                        .with(jwt().authorities(new SimpleGrantedAuthority("ROLE_ADMIN"))))
+                        .with(jwt().authorities(new SimpleGrantedAuthority("ADMIN"))))
                 .andExpect(status().isCreated());
     }
 
@@ -49,7 +52,7 @@ public class FornecedorControllerSecurityTest {
             }
         """;
 
-        mockMvc.perform(post("/fornecedor")
+        mockMvc.perform(post("/fornecedores")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(fornecedorJson)
                         .with(jwt().authorities(new SimpleGrantedAuthority("ROLE_USER"))))
@@ -58,7 +61,7 @@ public class FornecedorControllerSecurityTest {
 
     @Test
     void deveNegarAcessoSemAutenticacao() throws Exception {
-        mockMvc.perform(get("/fornecedor/listar"))
+        mockMvc.perform(get("/fornecedores/listar"))
                 .andExpect(status().isUnauthorized());
     }
 
