@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDateTime;
@@ -43,9 +44,13 @@ public class Usuario implements UserDetails {
     @Column(nullable = false, updatable = false)
     private LocalDateTime dataCadastro = LocalDateTime.now();
 
-    @Override
+//    @Override
+//    public Collection<? extends GrantedAuthority> getAuthorities() {
+//        return List.of(role);
+//    }
+
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(role);
+        return List.of(new SimpleGrantedAuthority(role.name()));
     }
 
     @Override

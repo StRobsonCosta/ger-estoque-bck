@@ -68,10 +68,12 @@ public class JwtService {
     }
 
     public String extrairUserId(String token) {
+        log.info("Em JwtService extrairUserId)");
         return extrairClaim(token).getSubject();
     }
 
     public boolean tokenExpirado(String token) {
+        log.info("Em JwtService tokenExpirado)");
         return extrairClaim(token).getExpiration().before(new Date());
     }
 
@@ -85,7 +87,7 @@ public class JwtService {
     }
 
     public Authentication getAuthentication(String token, UserDetails userDetails) {
-        return new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+        return new UsernamePasswordAuthenticationToken(userDetails, token, userDetails.getAuthorities());
     }
 
     public String extrairToken(HttpServletRequest request) {
