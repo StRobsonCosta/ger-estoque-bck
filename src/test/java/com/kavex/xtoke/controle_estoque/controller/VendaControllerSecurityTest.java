@@ -68,7 +68,7 @@ public class VendaControllerSecurityTest {
 
         when(vendaUseCase.buscarPorId(vendaId)).thenReturn(vendaDTO);
 
-        mockMvc.perform(get("/api/vendas")
+        mockMvc.perform(get("/vendas")
                         .param("vendaId", vendaId.toString())
                         .with(csrf()))
                 .andExpect(status().isOk())

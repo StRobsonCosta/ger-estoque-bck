@@ -1,22 +1,26 @@
 package com.kavex.xtoke.controle_estoque.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.kavex.xtoke.controle_estoque.infrastructure.security.JwtAuthenticationFilter;
 import com.kavex.xtoke.controle_estoque.infrastructure.security.JwtService;
 import com.kavex.xtoke.controle_estoque.infrastructure.security.RedisTokenService;
 import com.kavex.xtoke.controle_estoque.web.AuthenticationController;
+import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
+
+import java.util.*;
 
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -24,13 +28,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
-@ExtendWith(MockitoExtension.class)
+//@ExtendWith(MockitoExtension.class)
 @ActiveProfiles("test")
 public class AuthenticationControllerTest {
 
     public static final String EMAIL = "user@example.com";
     public static final String URL_LOGOUT = "/auth/logout";
-    public static final String URL_LOGIN = "/auth/logout";
+    public static final String URL_LOGIN = "/auth/login";
 
     @Autowired
     private MockMvc mockMvc;
@@ -40,6 +44,9 @@ public class AuthenticationControllerTest {
 
     @Mock
     private AuthenticationManager authenticationManager;
+
+    @Autowired
+    private JwtAuthenticationFilter jwtAuthenticationFilter;
 
     @Mock
     private JwtService jwtService;
@@ -53,17 +60,39 @@ public class AuthenticationControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
+//    @BeforeEach
+//    void setup() throws Exception {
+//        mockMvc = MockMvcBuilders.standaloneSetup(authenticationController)
+//                .addFilters(jwtAuthenticationFilter)  // Adiciona o filtro JWT
+//                .build();
+//    }
+
+
     @Test
+    @WithMockUser(username = EMAIL, password = "password", roles = "ADMIN")
     void deveRealizarLoginComSucesso() throws Exception {
         String password = "password";
         String token = "mock-jwt-token";
+        String userId = "user123";
 
-        // Simula o comportamento do AuthenticationManager
-        when(authenticationManager.authenticate(any())).thenReturn(null);
+        // Mock do comportamento do JwtService
+        when(jwtService.extrairToken(any(HttpServletRequest.class))).thenReturn(token);
+        when(jwtService.validarToken(token)).thenReturn(true);
+        when(jwtService.extrairUserId(token)).thenReturn(userId);
+
+        // Mock do comportamento do RedisTokenService
+        when(redisTokenService.obterToken(userId)).thenReturn(token);
 
         // Simula o comportamento do UserDetailsService
         UserDetails userDetails = mock(UserDetails.class);
+        when(userDetails.getUsername()).thenReturn(EMAIL);
+        when(userDetails.getAuthorities()).thenReturn(Collections.emptyList()); // Aqui evitamos o NullPointerException
         when(userDetailsService.loadUserByUsername(EMAIL)).thenReturn(userDetails);
+
+        // Simula o comportamento do AuthenticationManager
+        Authentication authentication = mock(Authentication.class);
+        when(authentication.getPrincipal()).thenReturn(userDetails); // Garante que retorna userDetails
+        when(authenticationManager.authenticate(any())).thenReturn(authentication);
 
         // Simula o comportamento do JwtService
         when(jwtService.gerarToken(userDetails.getUsername())).thenReturn(token);
