@@ -1,0 +1,56 @@
+rules:
+  - pattern: "kafka.server<type=(.+), name=(.+)><>Value"
+    name: "kafka_server_$1_$2"
+    help: "Kafka server metric $1 $2"
+    type: GAUGE
+  - pattern: "kafka.network<type=(.+), name=(.+)><>Value"
+  - pattern: "kafka.consumer<type=(.+), name=(.+)><>Value"
+  - pattern: "kafka.producer<type=(.+), name=(.+)><>Value"
+  - pattern: "java.lang<type=(.+), name=(.+)><>Value"
+  
+# Regras para métricas de contagem
+  - pattern: "kafka.server<type=(.+), name=(.+)><>Count"
+    name: "kafka_server_$1_$2_count"
+    labels:
+      job: "kafka"
+    help: "Kafka server count metrics"
+    type: COUNTER
+
+  # Regras para métricas de valor que variam ao longo do tempo
+  - pattern: "kafka.server<type=(.+), name=(.+)><>([0-9]+)"
+    name: "kafka_server_$1_$2"
+    labels:
+      instance: "$3"
+    help: "Kafka server gauge metrics"
+    type: GAUGE
+    
+   # Métricas de tópicos
+  - pattern: "kafka.server<type=BrokerTopicMetrics, name=(.+)><>(Count|Value)"
+    name: "kafka_topic_partition_current_offset"
+    labels:
+      topic: "$1"
+    help: "Current offset for the topic partition"
+
+  # Métricas de lag de grupos de consumidores
+  - pattern: "kafka.consumer<type=ConsumerLag, group=(.+), topic=(.+)><>(Count|Value)"
+    name: "kafka_consumergroup_lag"
+    labels:
+      group: "$1"
+      topic: "$2"
+    help: "Lag for the consumer group"
+
+  # Offset atual do consumidor
+  - pattern: "kafka.consumer<type=ConsumerFetcherManager, group=(.+), topic=(.+)><>(Count|Value)"
+    name: "kafka_consumergroup_current_offset"
+    labels:
+      group: "$1"
+      topic: "$2"
+    help: "Current offset for the consumer group"
+
+  # Contagem de partições de tópico
+  - pattern: "kafka.server<type=BrokerTopicMetrics, name=PartitionCount><>(Count|Value)"
+    name: "kafka_topic_partitions"
+    labels:
+      topic: "$1"
+    help: "Number of partitions for the topic"  
+

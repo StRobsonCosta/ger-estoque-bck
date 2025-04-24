@@ -1,0 +1,109 @@
+version: '3.8'
+services:  
+
+  zookeeper:
+    image: zookeeper:3.8
+    container_name: zookeeper-xtk
+    ports:
+      - "2181:2181"
+    networks:
+      - app-xtk
+
+  kafka:
+    image: bitnami/kafka
+    container_name: kafka-xtk
+    ports:
+      - "9092:9092"
+      - "7071:7071"
+    environment:
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_LISTENERS: INSIDE://kafka:9092
+      KAFKA_ADVERTISED_LISTENERS: INSIDE://kafka:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INSIDE:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: INSIDE
+      KAFKA_JMX_PORT: 7071
+    depends_on:
+      - zookeeper
+    networks:
+      - app-xtk
+    healthcheck:
+      test: ["CMD", "kafka-topics.sh", "--list", "--bootstrap-server", "kafka:9092"]
+      interval: 30s
+      timeout: 10s
+      retries: 5 
+      
+  mailhog:
+    container_name: mailHog-xtk
+    image: mailhog/mailhog:latest
+    ports:
+      - "8025:8025"
+      - "1025:1025"
+    networks:
+      - app-xtk    
+
+  app:
+    build: .
+    container_name: xtoke
+    env_file:
+      - .env
+    volumes:
+      - ./.env:/app/.env
+    ports:
+      - "8081:8081"
+    depends_on:
+      kafka:
+        condition: service_started
+      db:
+        condition: service_started
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/airVoyant
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      DOTENV_PATH: "/app/.env"
+      #SPRING_PROFILES_ACTIVE: hml
+    networks:
+      - app-xtk
+
+  db:
+    image: postgres:13-alpine
+    container_name: postgres-xtk
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 1234
+      POSTGRES_DB: xtoke
+    ports:
+      - "5432:5432"
+    networks:
+      - app-xtk
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      
+  redis:
+    image: redis:6.2-alpine
+    container_name: redis-xtk
+    ports:
+      - "6379:6379"
+    command: ["redis-server", "--requirepass", "", "--notify-keyspace-events", "Ex", "--maxmemory", "512mb", "--maxmemory-policy", "allkeys-lru"]
+    networks:
+      - app-xtk
+    volumes:
+      - redis_data:/data/db
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 10s    
+
+networks:
+  app-xtk:
+    driver: bridge
+
+
+volumes:
+  postgres_data:
+  redis_data:
