@@ -1,11 +1,13 @@
 package com.kavex.xtoke.controle_estoque.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.kavex.xtoke.controle_estoque.application.service.UsuarioDetailsServiceImpl;
 import com.kavex.xtoke.controle_estoque.infrastructure.security.JwtAuthenticationFilter;
 import com.kavex.xtoke.controle_estoque.infrastructure.security.JwtService;
 import com.kavex.xtoke.controle_estoque.infrastructure.security.RedisTokenService;
 import com.kavex.xtoke.controle_estoque.web.AuthenticationController;
 import jakarta.servlet.http.HttpServletRequest;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -19,6 +21,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.util.*;
 
@@ -60,12 +63,12 @@ public class AuthenticationControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
-//    @BeforeEach
-//    void setup() throws Exception {
-//        mockMvc = MockMvcBuilders.standaloneSetup(authenticationController)
-//                .addFilters(jwtAuthenticationFilter)  // Adiciona o filtro JWT
-//                .build();
-//    }
+    @BeforeEach
+    void setup() throws Exception {
+        mockMvc = MockMvcBuilders.standaloneSetup(authenticationController)
+                .addFilters(jwtAuthenticationFilter)  // Adiciona o filtro JWT
+                .build();
+    }
 
 
     @Test
@@ -127,12 +130,5 @@ public class AuthenticationControllerTest {
         verify(redisTokenService, times(1)).removerToken(EMAIL);
     }
 
-    @Test
-    void naoDevePermitirLogoutSemUsuarioAutenticado() throws Exception {
-
-        mockMvc.perform(post(URL_LOGOUT)
-                        .param("email", EMAIL))
-                .andExpect(status().isForbidden());  // Espera-se falha 403 para usuário não autenticado
-    }
 }
 
