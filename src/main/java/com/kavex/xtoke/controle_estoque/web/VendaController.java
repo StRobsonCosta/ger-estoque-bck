@@ -27,7 +27,7 @@ public class VendaController {
     }
 
     @GetMapping("/listar")
-//    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     public ResponseEntity<List<VendaDTO>> listarVendas() {
         List<VendaDTO> vendas = vendaUseCase.listarVendas();
         return ResponseEntity.ok(vendas);
