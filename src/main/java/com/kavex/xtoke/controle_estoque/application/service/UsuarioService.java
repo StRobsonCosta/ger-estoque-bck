@@ -1,7 +1,6 @@
 package com.kavex.xtoke.controle_estoque.application.service;
 
 import com.kavex.xtoke.controle_estoque.application.mapper.UsuarioMapper;
-import com.kavex.xtoke.controle_estoque.application.mapper.VendaMapper;
 import com.kavex.xtoke.controle_estoque.application.port.in.UsuarioUseCase;
 import com.kavex.xtoke.controle_estoque.application.port.out.UsuarioRepositoryPort;
 import com.kavex.xtoke.controle_estoque.domain.exception.ErroMensagem;
@@ -10,15 +9,10 @@ import com.kavex.xtoke.controle_estoque.web.dto.UsuarioDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.UUID;
 
 @Slf4j
@@ -64,6 +58,7 @@ public class UsuarioService implements UsuarioUseCase {
         return usuarioMapper.toDTO(usuario);
     }
 
+    @Override
     public UsuarioDTO atualizarUsuario(UUID id, UsuarioDTO usuarioDTO) {
         log.info("Iniciando atualização do usuário com ID: {}", id);
 
@@ -80,6 +75,7 @@ public class UsuarioService implements UsuarioUseCase {
         return usuarioMapper.toDTO(usuario);
     }
 
+    @Override
     public void desativarUsuario(String email) {
         log.info("Iniciando desativação do usuário com e-mail: {}", email);
 
