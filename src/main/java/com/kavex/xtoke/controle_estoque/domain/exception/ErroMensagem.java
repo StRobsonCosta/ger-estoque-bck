@@ -25,11 +25,11 @@ public enum ErroMensagem {
     STATUS_VENDA_INVALIDO(HttpStatus.NOT_ACCEPTABLE, "Status de venda inválido: "),
 
     // 🔹 Erros 404 - NOT_FOUND
-    PRODUTO_NAO_ENCONTRADO(HttpStatus.NOT_FOUND, "Produto não encontrado para o ID fornecido."),
-    VENDA_NAO_ENCONTRADA(HttpStatus.NOT_FOUND, "Venda não encontrada para o ID fornecido."),
-    FORNECEDOR_NAO_ENCONTRADO(HttpStatus.NOT_FOUND, "Fornecedor não encontrado para o ID fornecido."),
-    USUARIO_NAO_ENCONTRADO(HttpStatus.NOT_FOUND, "Usuário não encontrado."),
-    CLIENTE_NAO_ENCONTRADO(HttpStatus.NOT_FOUND, "Cliente não encontrado."),
+    PRODUTO_NAO_ENCONTRADO(HttpStatus.NOT_FOUND, "Produto Não Encontrado para o ID Fornecido."),
+    VENDA_NAO_ENCONTRADA(HttpStatus.NOT_FOUND, "Venda não Encontrada para o ID Fornecido."),
+    FORNECEDOR_NAO_ENCONTRADO(HttpStatus.NOT_FOUND, "Fornecedor Não Encontrado para o ID Fornecido."),
+    USUARIO_NAO_ENCONTRADO(HttpStatus.NOT_FOUND, "Usuário Não Encontrado."),
+    CLIENTE_NAO_ENCONTRADO(HttpStatus.NOT_FOUND, "Cliente Não Encontrado."),
 
     // 🔹 Erros 401 - UNAUTHORIZED
     NAO_AUTORIZADO(HttpStatus.UNAUTHORIZED, "Credenciais inválidas ou sessão expirada."),
