@@ -1,4 +1,4 @@
-package com.kavex.xtoke.controle_estoque.infrastructure.adapter.messaging.consumer;
+package com.kavex.xtoke.controle_estoque.infrastructure.adapter.messaging;
 
 import com.kavex.xtoke.controle_estoque.infrastructure.queue.RedisEventQueueService;
 import lombok.RequiredArgsConstructor;
