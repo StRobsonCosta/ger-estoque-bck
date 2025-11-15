@@ -7,12 +7,9 @@ import com.kavex.xtoke.controle_estoque.application.port.out.VendaRepositoryPort
 import com.kavex.xtoke.controle_estoque.domain.exception.BadRequestException;
 import com.kavex.xtoke.controle_estoque.domain.exception.ErroMensagem;
 import com.kavex.xtoke.controle_estoque.domain.exception.NotFoundException;
-import com.kavex.xtoke.controle_estoque.domain.model.ItemVenda;
-import com.kavex.xtoke.controle_estoque.domain.model.MetodoPagamento;
 import com.kavex.xtoke.controle_estoque.domain.model.StatusVenda;
 import com.kavex.xtoke.controle_estoque.domain.model.Venda;
 import com.kavex.xtoke.controle_estoque.infrastructure.adapter.messaging.EventVendaRealizada;
-import com.kavex.xtoke.controle_estoque.web.dto.ItemVendaDTO;
 import com.kavex.xtoke.controle_estoque.web.dto.VendaDTO;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -24,7 +21,6 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
