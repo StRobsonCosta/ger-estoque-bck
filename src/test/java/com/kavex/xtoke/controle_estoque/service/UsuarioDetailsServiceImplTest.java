@@ -60,6 +60,6 @@ public class UsuarioDetailsServiceImplTest {
                 () -> usuarioDetailsService.loadUserByUsername(email)
         );
 
-        assertEquals("Usuário não encontrado.", exception.getMessage());
+        assertEquals("Usuário Não encontrado.", exception.getMessage());
     }
 }
