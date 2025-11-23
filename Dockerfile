@@ -1,5 +1,5 @@
 # Usar a imagem do OpenJDK 17 como base
-FROM openjdk:17-jdk-slim
+FROM openjdk:17-slim
 
 # Definir o diretório de trabalho dentro do container
 WORKDIR /app
