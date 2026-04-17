@@ -10,7 +10,7 @@ Este projeto tem como objetivo fornecer um sistema completo para **gestão de es
 - **Relatórios e dashboards para análise de vendas**
 - **Mensageria para eventos críticos do sistema via Kafka**
 
----
+----
 
 ## 🚀 Stacks Utilizadas
 
